@@ -27,11 +27,6 @@ app.use(cors({
   credentials: true,
 }));
 
-// mongoose.connect(DB_URL, {
-//   useNewUrlParser: true,
-//   useCreateIndex: true,
-//   useFindAndModify: false,
-// });
 mongoose.connect(DB_URL);
 
 app.use(requestLogger);
@@ -44,7 +39,7 @@ const limiter = rateLimit({
 });
 
 app.use(limiter);
-// app.disable('x-powered-by');
+app.disable('x-powered-by');
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
