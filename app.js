@@ -56,7 +56,7 @@ app.post('/signup', celebrate({
 }), createUser);
 app.use('/users', auth, user);
 app.use('/movies', auth, movie);
-app.post('/signout', signOut);
+app.post('/signout', auth, signOut);
 
 app.use(errorLogger);
 
