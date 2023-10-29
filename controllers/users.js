@@ -6,7 +6,6 @@ const CastError = require('../errors/CastError');
 const NotFoundError = require('../errors/NotFoundError');
 const Conflict = require('../errors/Conflict');
 
-const SUCCESS_CODE = 201;
 const { NODE_ENV, JWT_SECRET } = process.env;
 
 module.exports.createUser = (req, res, next) => {
@@ -17,11 +16,17 @@ module.exports.createUser = (req, res, next) => {
       email: req.body.email,
       password: hash,
     }))
-    .then((user) => res.status(SUCCESS_CODE).send({
-      _id: user._id,
-      email: user.email,
-      name: user.name,
-    }))
+    .then((user) => {
+      const payload = { _id: user._id, email: user.email };
+      const token = jwt.sign(payload, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret');
+      res
+        .cookie('jwt', token, {
+          maxAge: 3600000 * 24 * 7,
+          httpOnly: true,
+          sameSite: true,
+        });
+      return res.send({ _id: user._id, email: user.email });
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new ValidationError('Переданы некорректные данные при создании пользователя'));
@@ -76,7 +81,7 @@ module.exports.getUserInfo = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('Пользователь по данному Id не найден');
       }
-      res.send({ name: user.name, email: user.email });
+      res.send({ name: user.name, email: user.email, id: user._id });
     })
     .catch((err) => {
       if (err.name === 'CastError') {

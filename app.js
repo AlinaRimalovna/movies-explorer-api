@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser');
 const { celebrate, Joi } = require('celebrate');
 const cors = require('cors');
 const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
+// const rateLimit = require('express-rate-limit');
 const user = require('./routes/users');
 const movie = require('./routes/movies');
 const { createUser, login, signOut } = require('./controllers/users');
@@ -23,7 +23,7 @@ const app = express();
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://alina-movie.nomoreparties.co'],
+  origin: ['http://localhost:3000', 'https://alina-movie.nomoredomainsicu.ru'],
   credentials: true,
 }));
 
@@ -31,14 +31,14 @@ mongoose.connect(DB_URL);
 
 app.use(requestLogger);
 app.use(helmet());
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  standardHeaders: true,
-  legacyHeaders: false,
-});
+// const limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000,
+//   max: 100,
+//   standardHeaders: true,
+//   legacyHeaders: false,
+// });
 
-app.use(limiter);
+// app.use(limiter);
 app.disable('x-powered-by');
 
 app.post('/signin', celebrate({
